@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drink Tracker</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+            flex-direction: column;
+        }
+        .timer {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+        .number {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- create a 3 column responsive layout using bootstrap -->
+    <div class="container">
+        <div class="row">
+            <div class="col text-center" id="clock" style="font-size: 2rem;"></div>
+            <div class="col text-right" id="timeStarted" style="font-size: 1rem;"></div>
+        </div>
+        <div class="row">
+            <div class="col text-center timer">
+                <div id="timeElapsed">00:00:00</div>
+                <div>Time Elapsed</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                <div class="number" id="drinkCount">0.0000</div>
+                <button id="addDrinkButton" class="btn btn-secondary mt-3">Add Drink</button>
+                <button id="removeDrinkButton" class="btn btn-secondary mt-3">Remove Drink</button>
+                <!-- Add the table here -->
+                <table class="table mt-3">
+                    <thead>
+                        <tr>
+                            <th scope="col">Drink Count</th>
+                            <th scope="col">Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="drinkTableBody">
+                        <!-- Rows will be added here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let drinkCount = 0.0000;
+        let timerInterval;
+        let drinkInterval;
+        let startTime;
+        let isStarted = false;
+
+        function updateDrinkCount() {
+            document.getElementById('drinkCount').innerText = drinkCount.toFixed(4);
+        }
+
+        function updateTimeElapsed() {
+            const now = new Date();
+            const elapsed = new Date(now - startTime);
+            const hours = String(elapsed.getUTCHours()).padStart(2, '0');
+            const minutes = String(elapsed.getUTCMinutes()).padStart(2, '0');
+            const seconds = String(elapsed.getUTCSeconds()).padStart(2, '0');
+            document.getElementById('timeElapsed').innerText = `${hours}:${minutes}:${seconds}`;
+        }
+
+        document.getElementById('addDrinkButton').addEventListener('click', () => {
+            if (!isStarted) {
+                startTime = new Date();
+                timerInterval = setInterval(updateTimeElapsed, 1000);
+                drinkInterval = setInterval(() => {
+                    drinkCount -= 0.5 / 3600;
+                    updateDrinkCount();
+                }, 1000);
+                isStarted = true;
+
+                // Display the start time
+                const startTimeString = startTime.toLocaleTimeString();
+                document.getElementById('timeStarted').innerText = `Started at: ${startTimeString}`;
+            }
+            drinkCount += 0.5;
+            updateDrinkCount();
+
+            // Add a new row to the table
+            const tableBody = document.getElementById('drinkTableBody');
+            const newRow = document.createElement('tr');
+            const countCell = document.createElement('td');
+            const timeCell = document.createElement('td');
+            countCell.innerText = drinkCount.toFixed(4);
+            timeCell.innerText = new Date().toLocaleTimeString();
+            newRow.appendChild(countCell);
+            newRow.appendChild(timeCell);
+            tableBody.appendChild(newRow);
+        });
+
+        document.getElementById('removeDrinkButton').addEventListener('click', () => {
+            if (isStarted) {
+                drinkCount -= 0.5;
+                updateDrinkCount();
+
+                // Add a new row to the table
+                const tableBody = document.getElementById('drinkTableBody');
+                const newRow = document.createElement('tr');
+                const countCell = document.createElement('td');
+                const timeCell = document.createElement('td');
+                countCell.innerText = drinkCount.toFixed(4);
+                timeCell.innerText = new Date().toLocaleTimeString();
+                newRow.appendChild(countCell);
+                newRow.appendChild(timeCell);
+                tableBody.appendChild(newRow);
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
+    
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('clock').innerText = `${hours}:${minutes}:${seconds}`;
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        document.getElementById('startButton').addEventListener('click', () => {
+            const startTimeString = startTime.toLocaleTimeString();
+            document.getElementById('timeStarted').innerText = `Started at: ${startTimeString}`;
+        });
+    </script>
+
